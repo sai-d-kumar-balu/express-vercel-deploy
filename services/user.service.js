@@ -6,6 +6,10 @@ class UserService {
         return userRepo.findAll();
     }
 
+    async getById(id) {
+        return userRepo.findById(id);
+    }
+
     async register({ name, email, password }) {
         const exists = await userRepo.findByEmail(email);
         if (exists) throw new Error('Email already registered');
