@@ -1,8 +1,11 @@
 const db = require('../config/db');
 
 class PostRepository {
-    async findAll() {
-        const [rows] = await db.promise().query('SELECT * FROM posts');
+    async findAll(limit = 10) {
+        const [rows] = await db.promise().query(
+            'SELECT * FROM posts ORDER BY created_at DESC LIMIT ?',
+            [limit]
+        );
         return rows;
     }
 
@@ -42,6 +45,23 @@ class PostRepository {
     async create(post) {
         const [result] = await db.promise().query('INSERT INTO posts SET ?', post);
         return { id: result.insertId, ...post };
+    }
+
+    async bulkCreate(posts) {
+        if (!Array.isArray(posts) || posts.length === 0) {
+            throw new Error('Input must be a non-empty array of post objects');
+        }
+
+        const values = posts.map(post => [post.user_id, post.title, post.body]);
+        const [result] = await db.promise().query(
+            'INSERT INTO posts (user_id, title, body) VALUES ?',
+            [values]
+        );
+
+        return {
+            insertedCount: result.affectedRows,
+            firstInsertId: result.insertId,
+        };
     }
 }
 

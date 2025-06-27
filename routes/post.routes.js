@@ -10,5 +10,6 @@ router.get('/', function (req, res, next) {
 router.get('/api/listPosts', postController.listPosts);
 router.get('/api/getPost', postController.getPost);
 router.post('/api/createPost', postController.createPost);
+router.post('/api/bulkCreate', postController.bulkCreate);
 
 module.exports = router;

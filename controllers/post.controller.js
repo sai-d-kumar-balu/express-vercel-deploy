@@ -2,7 +2,8 @@ const postService = require('../services/post.service');
 
 exports.listPosts = async (req, res, next) => {
     try {
-        const posts = await postService.getAll();
+        const limit = parseInt(req.query.limit) || 10;
+        const posts = await postService.getAll(limit);
         res.json({ success: true, message: 'Posts fetched successfully', data: posts });
     } catch (err) {
         next(err);
@@ -23,6 +24,15 @@ exports.createPost = async (req, res, next) => {
     try {
         const post = await postService.create(req.body);
         res.status(201).json({ success: true, message: 'Post created successfully', data: post });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.bulkCreate = async (req, res, next) => {
+    try {
+        const posts = await postService.bulkCreate(req.body);
+        res.status(201).json({ success: true, message: 'Posts created successfully', data: posts });
     } catch (err) {
         next(err);
     }
